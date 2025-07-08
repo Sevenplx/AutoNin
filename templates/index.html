@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Voice Form Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at 20% 20%, rgba(132, 94, 194, 0.2), transparent 40%),
+                  radial-gradient(circle at 80% 80%, rgba(94, 231, 223, 0.2), transparent 40%),
+                  #0f172a;
+      animation: gradientMove 10s ease infinite;
+      background-size: 200% 200%;
+    }
+    @keyframes gradientMove {
+      0%, 100% { background-position: 0% 0%, 100% 100%, center; }
+      50% { background-position: 50% 50%, 50% 50%, center; }
+    }
+    .text-gradient {
+      background: linear-gradient(90deg, rgba(0,142,237,1) 0%, rgba(0,98,255,1) 8%, rgba(0,153,255,1) 31%, rgba(0,145,242,1) 52%, rgba(220,20,246,1) 76%, rgba(255,0,247,1) 88%);
+      background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    button:hover:not(.no-hover) { background-color: white !important; color: black !important; }
+    .warning { color: #f87171; font-size: 0.75rem; margin-top: 2px; }
+    label { color: #d1d5db; }
+    input:focus { outline: none; border-color: #3b82f6 !important; box-shadow: 0 0 0 2px rgba(59,130,246,0.5); }
+        /* Modal animation */
+    .fade-slide {
+      opacity: 0;
+      transform: translateY(-40px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .fade-slide.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Tab indicator */
+    #indicator {
+      top: 0;
+      left: 0;
+      position: absolute;
+      background-color: rgba(59, 130, 246, 0.15);
+      border-radius: 9999px;
+      transition: all 0.3s ease-out;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #tabs::-webkit-scrollbar {
+      display: none;
+    }
+    #tabs {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Override modal text colors for dark background */
+    #modalBox,
+    #modalBox p,
+    #modalBox ul,
+    #modalBox li,
+    #modalBox a,
+    #modalBox h2,
+    #modalBox h3,
+    #modalBox button.tab-button,
+    #modalBox #tabs button.tab-button,
+    #modalBox #tabs span#indicator {
+      color: #f0f0f0 !important; /* light gray text */
+    }
+    #modalBox a {
+      color: #93c5fd !important; /* Tailwind blue-400 */
+    }
+    #modalBox a:hover {
+      color: #bfdbfe !important; /* Tailwind blue-200 */
+    }
+    #modalBox #tabs span#indicator {
+      background-color: rgba(147, 197, 253, 0.2) !important; /* lighter blue indicator */
+    }
+    /* Override close button colors */
+    #closeModal {
+      color: #e0e0e0 !important;
+    }
+    #closeModal:hover {
+      color: white !important;
+    }
+    /* For Webkit browsers (Chrome, Safari, Edge) */
+    #modalBox::-webkit-scrollbar {
+    width: 8px;
+    }
+    #modalBox::-webkit-scrollbar-track {
+    background: transparent;
+    }
+    #modalBox::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    }
+    #modalBox::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* For Firefox */
+    #modalBox {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center px-4 text-white font-sans">
+
+  <header class="mb-8 text-center">
+    <h1 class="text-3xl sm:text-5xl font-extrabold">Make <span class="text-white">AI</span> <span class="text-gradient">better</span> with <span class="text-gradient">Rysera</span></h1>
+  </header>
+
+  <main class="relative bg-slate-800/70 border border-slate-800 rounded-2xl p-4 sm:p-8 w-full max-w-xs sm:max-w-md lg:max-w-lg shadow-2xl mx-auto">
+    <h2 class="text-base sm:text-xl font-semibold mb-5">Fill out the form with your <span class="text-gradient">voice</span> using AI button!</h2>
+
+    <canvas id="visualizer" class="w-full h-24 mb-4 bg-black rounded-md"></canvas>
+
+    <p id="waitingMsg" class="hidden text-sm text-yellow-500 mb-2">Please wait for a moment...</p>
+
+    <form id="dataForm" enctype="multipart/form-data" class="flex flex-col gap-4" onsubmit="handleSubmit(event)">
+      <div>
+        <label for="name" class="text-sm text-gray-300">Name</label>
+        <input id="name" name="name" type="text" required class="w-full bg-slate-700 px-4 py-2 rounded-md border border-slate-600" />
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <div class="sm:w-1/2">
+          <label for="email" class="text-sm text-gray-300">Email</label>
+          <input id="email" name="email" type="email" required class="w-full bg-slate-700 px-4 py-2 rounded-md border border-slate-600" />
+        </div>
+        <div class="sm:w-1/2">
+          <label for="password" id="passwordLabel" class="text-sm text-gray-300">Password (type manually)*</label>
+          <input id="password" name="password" type="password" required class="w-full bg-slate-700 px-4 py-2 rounded-md border border-slate-600" />
+        </div>
+      </div>
+      <div>
+        <label for="phone" class="text-sm text-gray-300">Phone (10 digits)</label>
+        <input id="phone" name="phone" type="tel" pattern="\d{10}" required class="w-full bg-slate-700 px-4 py-2 rounded-md border border-slate-600" />
+      </div>
+      <div>
+        <label for="address" class="text-sm text-gray-300">Address</label>
+        <input id="address" name="address" type="text" required class="w-full bg-slate-700 px-4 py-2 rounded-md border border-slate-600" />
+      </div>
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2 gap-2 sm:gap-4">
+        <div class="sm:self-start sm:text-left text-sm">
+          <button type="button" onclick="clearForm()" class="underline no-hover">Clear Form</button>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+            <div id="aiOptions" class="flex gap-2 transition-all duration-300 scale-0 opacity-0">
+
+              <!-- Mic Button -->
+              <div class="group relative">
+                <button type="button" onclick="toggleRecording(this)" class="w-10 h-10 flex items-center justify-center bg-black rounded-full">
+                  <i data-feather="mic"></i>
+                </button>
+                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-[11px] px-2 py-1 rounded shadow-lg whitespace-nowrap z-50 text-center w-max">
+                  Speak to the mic casually<br>(auto-filling)
+                </div>
+              </div>
+              <!-- Upload Button -->
+              <div class="group relative">
+                <button type="button" onclick="document.getElementById('fileInput').click();" class="w-10 h-10 flex items-center justify-center bg-black rounded-full">
+                  <i data-feather="upload"></i>
+                </button>
+                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-[11px] px-2 py-1 rounded shadow-lg whitespace-nowrap z-50 text-center w-max">
+                  Upload a recorded speech<br>(auto-filling)
+                </div>
+                <input id="fileInput" type="file" accept="audio/*" hidden onchange="uploadFile(this.files[0])" />
+              </div>
+              <!-- Download Button -->
+              <div class="group relative">
+                <button type="button" onclick="downloadRecording()" class="w-10 h-10 flex items-center justify-center bg-black rounded-full">
+                  <i data-feather="download"></i>
+                </button>
+                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-[11px] px-2 py-1 rounded shadow-lg whitespace-nowrap z-50 text-center w-max">
+                  Download the last<br>uploaded audio (dev)
+                </div>
+              </div>
+            </div>
+
+          <button type="button" onclick="toggleOptions()" class="w-10 h-10 flex items-center justify-center bg-black rounded-full font-bold">AI</button>
+                    <div class="relative group inline-block">
+            <button id="autoFillBtn" type="button" disabled
+              class="bg-gray-600 text-gray-400 px-4 py-2 rounded-md cursor-not-allowed opacity-50">
+              Auto Fill
+            </button>
+            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block 
+                        bg-gray-800 text-white text-xs rounded px-2 py-1 z-10 whitespace-nowrap shadow-lg text-center">
+              No need – Form will fill in <br>automatically
+            </div>
+          </div>
+        </div>
+      </div>
+      <p id="ai-message" class="hidden text-xs text-blue-400 mt-2">Auto Fill via AI activated</p>
+      <p id="transcript" class="mt-4 text-sm text-gray-300">Transcription:</p>
+      <button id="submitBtn" type="submit" class="mt-2 bg-black text-white font-bold py-2 rounded-md shadow-lg hover:bg-white hover:text-black transition-all">Submit</button>
+    </form>
+  </main>
+
+  <audio id="confetti-sound" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7e3be18c85.mp3?filename=win-fanfare-trumpets-6185.mp3" type="audio/mpeg" />
+  </audio>
+
+    <!-- Real More Button -->
+  <button
+    id="help-btn"
+    class="group fixed bottom-4 right-4
+           bg-blue-900 bg-opacity-75 hover:bg-opacity-100
+           text-white rounded-full
+           inline-flex items-center justify-center overflow-hidden
+           transition-[width] duration-500 ease-in-out
+           w-12 sm:w-14 md:w-16 h-12 sm:h-14 md:h-16
+           hover:w-28 sm:hover:w-32 md:hover:w-40
+           focus:outline-none"
+  >
+    <!-- Exclamation icon -->
+    <svg xmlns="http://www.w3.org/2000/svg"
+         class="flex-shrink-0
+                w-6 h-6       /* phones */
+                sm:w-7 sm:h-7 /* tablets */
+                md:w-8 md:h-8 /* desktops */"
+         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 8v4m0 4h.01M12 2a10 10 0 11-10 10A10 10 0 0112 2z"/>
+    </svg>
+    <!-- Sliding "More" container -->
+    <div id="more-container"
+         class="overflow-hidden max-w-0 transition-[max-width] duration-500 ease-in-out
+                group-hover:max-w-[4rem]">
+      <span class="ml-2 whitespace-nowrap">More</span>
+    </div>
+  </button>
+
+  <!-- Modal Background -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 p-2">
+    <!-- Modal Box with dark translucent bg -->
+    <div id="modalBox"
+     class="fade-slide bg-black bg-opacity-30 w-[90vw] sm:w-[800px] h-[90vh] sm:h-[600px] max-h-[90vh] rounded-lg shadow-2xl flex flex-col font-mono p-4 sm:p-6 relative">
+      
+      <button
+        id="closeModal"
+        class="select-none cursor-pointer absolute bottom-1 right-6 bg-transparent border-0 font-normal text-base underline user-select-none hover:text-white"
+      >
+        CLOSE
+      </button>
+
+      <!-- Sticky Header: Tabs -->
+      <div class="sticky top-0 bg-transparent z-20 flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-700 shadow-sm px-4 py-3 rounded-t-lg gap-2">
+        <!-- Tabs -->
+        <div id="tabs" class="flex justify-center gap-2 text-sm sm:text-base md:text-lg relative overflow-x-auto whitespace-nowrap">
+          <span id="indicator" class="absolute top-0 left-0 bg-blue-100 bg-opacity-50 rounded-full transition-all duration-300 ease-out"></span>
+
+          <button class="tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="tutorial">Tutorial</button>
+          <button class="tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="about">About</button>
+          <button class="tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="credits">Credits</button>
+          <button class="tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="contact">Contact</button>
+        </div>
+      </div>
+
+      <!-- Scrollable Content Area -->
+      <div class="overflow-y-auto p-4 md:p-6 pt-8 md:pt-10 text-gray-200 text-lg space-y-6 flex-1 rounded-b-lg">
+        <!-- Tutorial -->
+        <div class="tab-content" id="tutorial">
+          <h2 class="text-red-600 font-bold text-3xl mb-4">> Tutorial</h2>
+          <div class="aspect-w-16 aspect-h-9">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/EE-xtCF3T94?si=MyS2rq7ZMYHaNA3d">
+            </iframe>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="tab-content hidden" id="about">
+        <h2 class="text-red-600 font-bold text-3xl mb-4">> About</h2>
+        <p>
+            This project is a fully custom-built AI-powered voice form assistant developed as <b><i>part of my learning in artificial intelligence.</i></b> It was designed from the ground up to make digital form filling accessible, fast, and intelligent.
+        </p><br>
+        <p>
+            The tool uses <b><i>voice input and AI to automatically extract information</i></b> like names, emails, phone numbers, and addresses from natural speech. It is built to <b><i>assist users who may find typing difficult</i></b> — especially elderly individuals or those with disabilities — <b><i>while also being scalable for use in large</i></b> organizations, schools, and enterprises to <b><i>improve data collection workflows.</i></b>
+        </p><br>
+        <p>
+            The assistant blends real-time transcription with smart field detection, providing a seamless human-like interaction. <b><i>Future updates will include</i></b> support for multiple languages, smarter voice understanding, and expanded input handling for more complex forms.
+        </p>
+        </div>
+
+        <!-- Credits -->
+        <div class="tab-content hidden" id="credits">
+        <h2 class="text-red-600 font-bold text-3xl mb-4">> Credits</h2>
+        <ul class="list-disc list-inside space-y-0">
+            <li><strong>Lead Developer:</strong> Chemitha Sathsilu (sevenplx)</li>
+            <li><strong>Course/Guide:</strong> <a href="https://rysera.com" class="color-blue"> Rysera Innovations</a></li>
+            <li><strong>AI Engine:</strong> Whisper ASR by OpenAI for speech-to-text</li>
+            <li><strong>Frameworks:</strong> Flask (Python backend), Tailwind CSS (UI)</li>
+            <li><strong>JavaScript Features:</strong> Feather Icons, Canvas Confetti, Visualizer,</li>
+            <li><strong>Frontend Contributions:</strong> UI logic, animations, and modal interactions</li>
+            <li><strong>Cloud Platform:</strong> <a href="https://render.com" class="color-blue"> render.com</a></li>
+        </ul>
+        <p class="mt-4">
+            Special thanks to Dewmina Mandula and Iduwara Iluk(Rysera community) for guide, ideas, and feedback during development.
+        </p>
+        </div>
+
+        <!-- Contact -->
+        <div class="tab-content hidden" id="contact">
+          <h2 class="text-red-600 font-bold text-3xl mb-4">> Contact</h2>
+          <p><strong>Email:</strong> <a href="mailto:sathsiluchemitha@gmail.com" class="text-blue-500">sathsiluchemitha@gmail.com</a></p>
+          <p><strong>Telegram:</strong> <a href="https://t.me/chemitha" class="text-blue-500">t.me/chemitha</a></p>
+          <p><strong>Website:</strong> <a href="#" class="text-blue-500">pending.com/</a></p>
+
+          <h3 class="mt-6 font-semibold">-- Socials:</h3>
+          <ul class="list-disc list-inside space-y-0">
+            <li>Instagram: <a href="https://instagram.com/sevenplx" class="text-blue-500">@sevenplx</a></li>
+            <li>GitHub: <a href="https://github.com/Sevenplx" class="text-blue-500">github.com/Sevenplx</a></li>
+            <li>Twitter/X: <a href="https://x.com/sevenplx" class="text-blue-500">@sevenplx</a></li>
+          </ul>
+          <p class="mt-4">I'd love to hear from you!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Ensure external links open in new tab with security attributes
+      window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href.startsWith('http') || href.startsWith('mailto:')) {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+      }
+    });
+  });
+
+    // "More" button slide in/out on load (unchanged)
+    window.addEventListener('load', () => {
+      const container = document.getElementById('more-container');
+      const btn       = document.getElementById('help-btn');
+
+      // Slide-in "More" / expand
+      setTimeout(() => {
+        container.classList.replace('max-w-0', 'max-w-[4rem]');
+        btn.classList.replace('w-12', 'w-28');
+        btn.classList.replace('sm:w-14', 'sm:w-32');
+        btn.classList.replace('md:w-16', 'md:w-40');
+      }, 500);
+
+      // Slide-out / shrink back
+      setTimeout(() => {
+        container.classList.replace('max-w-[4rem]', 'max-w-0');
+        btn.classList.replace('w-28', 'w-12');
+        btn.classList.replace('sm:w-32', 'sm:w-14');
+        btn.classList.replace('md:w-40', 'md:w-16');
+      }, 3500);
+    });
+
+    // Modal logic
+    const modal       = document.getElementById('modal');
+    const modalBox    = document.getElementById('modalBox');
+    const openBtn     = document.getElementById('help-btn');
+    const closeBtn    = document.getElementById('closeModal');
+    const tabButtons  = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const indicator   = document.getElementById('indicator');
+
+    function moveIndicator(btn) {
+      const { offsetLeft: left, offsetWidth: width, offsetHeight: height } = btn;
+      indicator.style.width = width + 'px';
+      indicator.style.height = height + 'px';
+      indicator.style.transform = `translateX(${left}px)`;
+    }
+
+    openBtn.addEventListener('click', () => {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      // Reset position and opacity before animation
+      modalBox.style.transform = 'translateY(-40px)';
+      modalBox.style.opacity = '0';
+
+      // Trigger reflow so transition works
+      void modalBox.offsetWidth;
+
+      // Animate modalBox sliding down and fading in
+      modalBox.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+      modalBox.style.transform = 'translateY(0)';
+      modalBox.style.opacity = '1';
+
+      // Reset to default tab (Tutorial)
+      tabContents.forEach(c => c.classList.add('hidden'));
+      tabButtons.forEach(b => b.classList.replace('text-blue-400', 'text-gray-700'));
+
+      const first = tabButtons[0];
+      first.classList.replace('text-gray-700', 'text-blue-400');
+      document.getElementById(first.dataset.tab).classList.remove('hidden');
+      moveIndicator(first);
+    });
+
+    function closeModalAnimation() {
+      modalBox.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+      modalBox.style.transform = 'translateY(-40px)';
+      modalBox.style.opacity = '0';
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modalBox.style.transition = '';
+        modalBox.style.transform = '';
+        modalBox.style.opacity = '';
+      }, 400);
+    }
+
+    closeBtn.addEventListener('click', closeModalAnimation);
+
+    window.addEventListener('click', e => {
+      if (e.target === modal) {
+        closeModalAnimation();
+      }
+    });
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabContents.forEach(c => c.classList.add('hidden'));
+        tabButtons.forEach(b => b.classList.replace('text-blue-400', 'text-gray-700'));
+        document.getElementById(btn.dataset.tab).classList.remove('hidden');
+        btn.classList.replace('text-gray-700', 'text-blue-400');
+        moveIndicator(btn);
+      });
+    });
+
+    window.addEventListener('load', () => {
+      const first = tabButtons[0];
+      first.classList.replace('text-gray-700', 'text-blue-400');
+      document.getElementById(first.dataset.tab).classList.remove('hidden');
+      moveIndicator(first);
+    });
+  </script>
+
+  <script>
+    feather.replace();
+    let mediaRecorder, audioChunks = [], stream, lastBlob;
+
+    function toggleOptions() {
+      document.getElementById("aiOptions").classList.toggle("scale-0");
+      document.getElementById("aiOptions").classList.toggle("opacity-0");
+    }
+
+    function toggleRecording(btn) {
+      if (btn.dataset.recording === "true") {
+        mediaRecorder.stop();
+        btn.dataset.recording = "false";
+        btn.innerHTML = '<i data-feather="mic"></i>';
+      } else {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
+          stream = s;
+          setupVisualizer(s);
+          mediaRecorder = new MediaRecorder(s);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            stream.getTracks().forEach(t => t.stop());
+            lastBlob = new Blob(audioChunks, { type: "audio/webm" });
+            sendBlob(lastBlob);
+          };
+          mediaRecorder.start();
+          btn.dataset.recording = "true";
+          btn.innerHTML = '<i data-feather="stop-circle"></i>';
+        });
+      }
+      feather.replace();
+    }
+
+    function setupVisualizer(s) {
+      const canvas = document.getElementById('visualizer');
+      const ctx = canvas.getContext('2d');
+      const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      const analyser = audioCtx.createAnalyser();
+      audioCtx.createMediaStreamSource(s).connect(analyser);
+      analyser.fftSize = 256;
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      function draw() {
+        requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(data);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        const barW = canvas.width/data.length;
+        data.forEach((v,i) => {
+          ctx.fillStyle = '#0ff';
+          ctx.fillRect(i*barW, canvas.height-v, barW-1, v);
+        });
+      }
+      draw();
+    }
+
+    function sendBlob(blob) {
+      document.getElementById('waitingMsg').classList.remove('hidden');
+      const fd = new FormData();
+      fd.append('audiofile', blob, 'recording.webm');
+      fetch('/transcribe', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('waitingMsg').classList.add('hidden');
+          const f = data.fields;
+          if (f) {
+            document.getElementById('name').value = f.name||'';
+            document.getElementById('email').value = f.email||'';
+            document.getElementById('phone').value = f.phone||'';
+            document.getElementById('address').value = f.address||'';
+          }
+          document.getElementById('transcript').innerText = 'Transcription: '+data.text;
+          if (data.passwordWarning) {
+            const lbl = document.getElementById('passwordLabel');
+            lbl.classList.add('text-red-400');
+            lbl.innerText = 'Password (type manually)*';
+          }
+          // const autoBtn = document.getElementById('autoFillBtn');
+          // autoBtn.style.border = '2px solid #FFBF00';
+        });
+    }
+
+    function uploadFile(file) {
+      document.getElementById('waitingMsg').classList.remove('hidden');
+      const fd = new FormData();
+      fd.append('audiofile', file);
+      fetch('/transcribe', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('waitingMsg').classList.add('hidden');
+          const f = data.fields;
+          if (f) {
+            document.getElementById('name').value = f.name||'';
+            document.getElementById('email').value = f.email||'';
+            document.getElementById('phone').value = f.phone||'';
+            document.getElementById('address').value = f.address||'';
+          }
+          document.getElementById('transcript').innerText = 'Transcription: '+data.text;
+          if (data.passwordWarning) {
+            const lbl = document.getElementById('passwordLabel');
+            lbl.classList.add('text-red-400');
+            lbl.innerText = 'Password (type manually)*';
+          }
+          // const autoBtn = document.getElementById('autoFillBtn');
+          // autoBtn.style.border = '2px solid #FFBF00';
+        });
+    }
+
+    // function resetAutoFillBorder() {
+    //   const autoBtn = document.getElementById('autoFillBtn');
+    //   autoBtn.style.border = '';
+    //   document.getElementById('ai-message').classList.remove('hidden');
+    //   setTimeout(() => document.getElementById('ai-message').classList.add('hidden'), 3000);
+    // }
+
+    function downloadRecording() {
+      if (!lastBlob) return alert('No recording to download');
+      const url = URL.createObjectURL(lastBlob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'recording.webm';
+      a.click(); URL.revokeObjectURL(url);
+    }
+
+    function clearForm() {
+      ['name','email','phone','address','password'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('transcript').innerText = 'Transcription:';
+      fetch('/clear',{method:'POST'});
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const rect = btn.getBoundingClientRect();
+      confetti({ particleCount:100, spread:70,
+        origin: { x:rect.left/window.innerWidth, y:rect.top/window.innerHeight }
+      });
+      document.getElementById('confetti-sound').play();
+    }
+  </script>
+</body>
+</html>
