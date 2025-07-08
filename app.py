@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from flask_session import Session
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'
+app.secret_key = os.environ.get("SECRET_KEY", "fallback_dev_key")
 app.config['UPLOAD_FOLDER'] = "uploads"
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
