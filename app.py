@@ -12,7 +12,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-model = WhisperModel("base")
+model = WhisperModel("base", compute_type="int8")
 
 def extract_fields(text):
     fields = session.get('fields', {})
