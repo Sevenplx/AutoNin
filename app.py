@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, jsonify, session
-import whisper
+from faster_whisper import WhisperModel
 import re
 import os
 from werkzeug.utils import secure_filename
@@ -12,7 +12,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-model = whisper.load_model("base")
+model = WhisperModel("base")
 
 def extract_fields(text):
     fields = session.get('fields', {})
@@ -61,8 +61,8 @@ def index():
             fn=secure_filename(file.filename)
             path=os.path.join(app.config['UPLOAD_FOLDER'],fn)
             file.save(path)
-            res=model.transcribe(path)
-            transcript=res.get('text','')
+            segments, info = model.transcribe(path)
+            transcript = " ".join([seg.text for seg in segments])
             fields, warn=extract_fields(transcript)
             session['fields']=fields
     return render_template("index.html", fields=fields, transcript=transcript)
