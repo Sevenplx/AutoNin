@@ -1,1 +1,6 @@
 venv
+__pycache__/
+flask_session/
+uploads/
+*.mp3
+*.wav
