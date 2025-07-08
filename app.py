@@ -67,18 +67,22 @@ def index():
             session['fields']=fields
     return render_template("index.html", fields=fields, transcript=transcript)
 
-@app.route('/transcribe',methods=['POST'])
+@app.route('/transcribe', methods=['POST'])
 def transcribe():
-    file=request.files.get('audiofile')
-    if not file: return jsonify({'error':'No audio'}),400
-    fn=secure_filename(file.filename)
-    path=os.path.join(app.config['UPLOAD_FOLDER'],fn)
+    file = request.files.get('audiofile')
+    if not file:
+        return jsonify({'error': 'No audio'}), 400
+    fn = secure_filename(file.filename)
+    path = os.path.join(app.config['UPLOAD_FOLDER'], fn)
     file.save(path)
-    res=model.transcribe(path)
-    text=res.get('text','')
-    fields,warn=extract_fields(text)
-    session['fields']=fields
-    return jsonify({'text':text,'fields':fields,'passwordWarning':warn})
+
+    segments, info = model.transcribe(path)
+    text = " ".join([segment.text for segment in segments])
+
+    fields, warn = extract_fields(text)
+    session['fields'] = fields
+
+    return jsonify({'text': text, 'fields': fields, 'passwordWarning': warn})
 
 @app.route('/clear',methods=['POST'])
 def clear():
