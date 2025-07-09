@@ -269,6 +269,7 @@
           <h2 class="text-red-600 font-bold text-3xl mb-4">> Tutorial</h2>
           <div class="w-full max-w-2xl mx-auto aspect-video sm:aspect-video">
             <iframe 
+              id="tutorial-video"
               class="w-full h-full rounded-lg"
               src="https://www.youtube.com/embed/EE-xtCF3T94?si=MyS2rq7ZMYHaNA3d" 
               title="Tutorial Youtube video"
@@ -585,5 +586,26 @@
       document.getElementById('confetti-sound').play();
     }
   </script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+      let player;
+
+      // YouTube API callback
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('tutorial-video', {
+          events: {
+            'onReady': function () {
+              console.log("YouTube Player Ready");
+            }
+          }
+        });
+      }
+
+      function pauseYouTubeVideo() {
+        if (player && player.pauseVideo) {
+          player.pauseVideo();
+        }
+      }
+    </script>
 </body>
 </html>
