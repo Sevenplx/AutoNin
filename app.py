@@ -89,5 +89,7 @@ def clear():
     session.pop('fields',None)
     return ('', 204)
 
-if __name__=='__main__':
-    app.run(host='0.0.0.0', debug=True)
+# No need for this below when deploying on Render(gunicorn will handel it):
+
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', debug=True)
