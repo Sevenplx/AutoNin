@@ -8,11 +8,12 @@ from flask_session import Session
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "fallback_dev_key")
 app.config['UPLOAD_FOLDER'] = "uploads"
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-model = WhisperModel("tiny", compute_type="int8", download_root="/tmp")
+model = WhisperModel("tiny.en", compute_type="int8", download_root="/tmp")
 
 def extract_fields(text):
     fields = session.get('fields', {})
