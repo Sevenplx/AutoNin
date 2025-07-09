@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="logo.png">
   <title>Voice Form Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
@@ -107,7 +108,6 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
     }
-
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-center items-center px-4 text-white font-sans">
@@ -244,7 +244,7 @@
       
       <button
         id="closeModal"
-        class="select-none cursor-pointer absolute bottom-1 right-6 bg-transparent border-0 font-normal text-base underline user-select-none hover:text-white"
+        class="no-hover select-none cursor-pointer absolute bottom-1 right-6 bg-transparent border-0 font-normal text-base underline user-select-none hover:text-white"
       >
         CLOSE
       </button>
@@ -255,10 +255,10 @@
         <div id="tabs" class="flex justify-center gap-2 text-sm sm:text-base md:text-lg relative overflow-x-auto whitespace-nowrap">
           <span id="indicator" class="absolute top-0 left-0 bg-blue-100 bg-opacity-50 rounded-full transition-all duration-300 ease-out"></span>
 
-          <button class="tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="tutorial">Tutorial</button>
-          <button class="tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="about">About</button>
-          <button class="tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="credits">Credits</button>
-          <button class="tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="contact">Contact</button>
+          <button class="no-hover tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="tutorial">Tutorial</button>
+          <button class="no-hover tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="about">About</button>
+          <button class="no-hover tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="credits">Credits</button>
+          <button class="no-hover tab-button relative z-10 px-3 py-2 font-semibold text-gray-300" data-tab="contact">Contact</button>
         </div>
       </div>
 
@@ -267,9 +267,13 @@
         <!-- Tutorial -->
         <div class="tab-content" id="tutorial">
           <h2 class="text-red-600 font-bold text-3xl mb-4">> Tutorial</h2>
-          <div class="aspect-w-16 aspect-h-9">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/EE-xtCF3T94?si=MyS2rq7ZMYHaNA3d">
-            </iframe>
+          <div class="w-full max-w-2xl mx-auto aspect-video sm:aspect-video">
+            <iframe 
+              class="w-full h-full rounded-lg"
+              src="https://www.youtube.com/embed/EE-xtCF3T94?si=MyS2rq7ZMYHaNA3d" 
+              title="Tutorial Youtube video"
+              allowfullscreen
+            ></iframe>
           </div>
         </div>
 
@@ -293,7 +297,7 @@
         <ul class="list-disc list-inside space-y-0">
             <li><strong>Lead Developer:</strong> Chemitha Sathsilu (sevenplx)</li>
             <li><strong>Course/Guide:</strong> <a href="https://rysera.com" class="color-blue"> Rysera Innovations</a></li>
-            <li><strong>AI Engine:</strong> Whisper ASR by OpenAI for speech-to-text</li>
+            <li><strong>AI Engine:</strong> Faster-Whisper by SYSTRAN for speech-to-text</li>
             <li><strong>Frameworks:</strong> Flask (Python backend), Tailwind CSS (UI)</li>
             <li><strong>JavaScript Features:</strong> Feather Icons, Canvas Confetti, Visualizer,</li>
             <li><strong>Frontend Contributions:</strong> UI logic, animations, and modal interactions</li>
@@ -318,11 +322,14 @@
             <li>Twitter/X: <a href="https://x.com/sevenplx" class="text-blue-500">@sevenplx</a></li>
           </ul>
           <p class="mt-4">I'd love to hear from you!</p>
-        </div>
       </div>
-    </div>
-  </div>
 
+    </div>
+      <div class="mt-auto mb-6 text-center text-gray-600 font-mono cursor-default select-none hover:text-white">
+        <span class="block sm:inline">Built by Chemitha Sathsilu[Sevenplx]</span>
+        <span class="block sm:inline">© 2025</span>
+      </div>
+  </div>
   <script>
     // Ensure external links open in new tab with security attributes
       window.addEventListener('DOMContentLoaded', () => {

@@ -19,27 +19,36 @@ def extract_fields(text):
     fields = session.get('fields', {})
     show_password_warning = False
 
+    def clean_field(value):
+        return value.replace("-", "").strip()
+
     name_match = re.search(r"(?:my name is|i am|i'm|this is)\s+(\w+)", text, re.IGNORECASE)
     if name_match:
         fields['name'] = name_match.group(1)
 
-    email_match = re.search(r"([\w.-]+)\s+at\s+([\w.-]+)(?:\s*(?:dot\s*com|\.com))", text, re.IGNORECASE)
-    if email_match:
-        local = email_match.group(1)
-        domain = email_match.group(2)
-        email = f"{local}@{domain}"
-        if not email.endswith(".com"):
-            email += ".com"
+    # Enhanced safer email logic
+    email_phrases = re.findall(r"(?:email\s+(?:is|address\s+is)?\s*)([\w\d]+)at([\w\d]+)(?:dotcom|\.com)?", text.replace(" ", "").lower())
+    if email_phrases:
+        local, domain = email_phrases[0]
+        email = f"{local}@{domain}.com"
         fields['email'] = email.lower()
     else:
+        # Fallback for standard email patterns
         raw_email = text.lower().replace(" at ", "@").replace(" dot ", ".").replace(" ", "").rstrip('.')
         email_clean = re.findall(r"[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}", raw_email)
         if email_clean:
             fields['email'] = email_clean[0].lower()
 
-    phone_match = re.search(r"(?:phone number is|phone is)\s+(\+?[\d\s-]+)", text, re.IGNORECASE)
+    # flexible phone number extraction
+    phone_match = re.search(
+        r"(?:my\s+)?(?:phone\s+number\s+is|phone\s+is|contact\s+is|number\s+is|phone:)\s+(\+?[\d\s\-]+)",
+        text,
+        re.IGNORECASE
+    )
     if phone_match:
-        fields['phone'] = phone_match.group(1).strip()
+        number = clean_field(phone_match.group(1))
+        if len(re.sub(r"\D", "", number)) >= 10:  # ensure at least 10 digits
+            fields['phone'] = number
 
     address_match = re.search(r"(?:my address is|address is)\s+(.+?)(?:[\.!?]|$)", text, re.IGNORECASE)
     if address_match:
