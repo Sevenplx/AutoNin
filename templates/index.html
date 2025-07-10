@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+  <link rel="icon" type="image/png" href="https://github.com/Sevenplx/AutoNin/blob/main/templates/logo.png">
   <title>Voice Form Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
@@ -408,6 +408,8 @@
     });
 
     function closeModalAnimation() {
+      pauseYouTubeVideo(); // ✅ Pause YouTube on modal close
+
       modalBox.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
       modalBox.style.transform = 'translateY(-40px)';
       modalBox.style.opacity = '0';
@@ -430,6 +432,12 @@
 
     tabButtons.forEach(btn => {
       btn.addEventListener('click', () => {
+        // ✅ Pause YouTube if switching away from tutorial
+        const currentVisible = document.querySelector('.tab-content:not(.hidden)');
+        if (currentVisible && currentVisible.id === 'tutorial') {
+          pauseYouTubeVideo();
+        }
+
         tabContents.forEach(c => c.classList.add('hidden'));
         tabButtons.forEach(b => b.classList.replace('text-blue-400', 'text-gray-700'));
         document.getElementById(btn.dataset.tab).classList.remove('hidden');
@@ -585,7 +593,8 @@
       });
       document.getElementById('confetti-sound').play();
     }
-    <script src="https://www.youtube.com/iframe_api"></script>
+  </script>
+  <script src="https://www.youtube.com/iframe_api"></script>
     <script>
       let player;
 
@@ -605,39 +614,6 @@
           player.pauseVideo();
         }
       }
-
-      // Patch closeModalAnimation to pause video
-      function closeModalAnimation() {
-        pauseYouTubeVideo(); // ✅ Pause on modal close
-
-        modalBox.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
-        modalBox.style.transform = 'translateY(-40px)';
-        modalBox.style.opacity = '0';
-
-        setTimeout(() => {
-          modal.classList.add('hidden');
-          modalBox.style.transition = '';
-          modalBox.style.transform = '';
-          modalBox.style.opacity = '';
-        }, 400);
-      }
-
-      // Patch tab button switch to pause if leaving tutorial
-      tabButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const currentTab = document.querySelector('.tab-content:not(.hidden)');
-          if (currentTab?.id === 'tutorial') {
-            pauseYouTubeVideo(); // ✅ Pause when switching tabs
-          }
-
-          tabContents.forEach(c => c.classList.add('hidden'));
-          tabButtons.forEach(b => b.classList.replace('text-blue-400', 'text-gray-700'));
-          document.getElementById(btn.dataset.tab).classList.remove('hidden');
-          btn.classList.replace('text-gray-700', 'text-blue-400');
-          moveIndicator(btn);
-        });
-      });
     </script>
-
 </body>
 </html>
