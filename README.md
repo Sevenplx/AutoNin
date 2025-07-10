@@ -17,14 +17,14 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 ## 🎯 Features
 
-- 🎤 **Voice-to-Form**: Speak naturally to fill the form.
-- 📁 **Upload Audio**: Supports uploading your own recordings.
-- ✨ **Real-Time AI**: Uses Faster-Whisper to transcribe voice input instantly.
-- 🧠 **Smart Field Detection**: Detects name, email, phone, address from voice.
-- 🚫 **Privacy-Aware**: Warns if passwords are detected — does not auto-fill them.
-- 📱 **Responsive UI**: Optimized for mobile, tablet, and desktop.
-- 🎉 **Interactive Feedback**: Audio visualizer, confetti, and fun UI elements.
-- 📽️ **Built-in Tutorial**: Integrated YouTube tutorial + about, credits, contact modal.
+-  **Voice-to-Form**: Speak naturally to fill the form.
+-  **Upload Audio**: Supports uploading your own recordings.
+-  **Real-Time AI**: Uses Faster-Whisper to transcribe voice input instantly.
+-  **Smart Field Detection**: Detects name, email, phone, and address from voice.
+-  **Privacy-Aware**: Warns if passwords are detected — does not auto-fill them.
+-  **Responsive UI**: Optimized for mobile, tablet, and desktop.
+-  **Interactive Feedback**: Audio visualizer, confetti, and fun UI elements.
+-  **Built-in Tutorial**: Integrated YouTube tutorial + about, credits, contact modal.
 
 ---
 
