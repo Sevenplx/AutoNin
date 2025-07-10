@@ -39,7 +39,7 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 ---
 
-## 📦 Project Structure
+## > Project Structure
 AutoNin/
 ├── app.py # Flask backend
 ├── templates/
