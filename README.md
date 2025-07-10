@@ -15,7 +15,7 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 ---
 
-## 🎯 Features
+## > Features
 
 -  **Voice-to-Form**: Speak naturally to fill the form.
 -  **Upload Audio**: Supports uploading your own recordings.
@@ -28,7 +28,7 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 ---
 
-## 🛠️ Tech Stack
+## > Tech Stack
 
 | Layer        | Technologies                               |
 |--------------|--------------------------------------------|
@@ -52,7 +52,7 @@ AutoNin/
 
 ---
 
-## 🚀 Getting Started (Local Setup)
+## > Getting Started (Local Setup)
 
 ### 1. Clone the repo
 
@@ -79,17 +79,17 @@ python app.py
 Visit [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
 ---
-## 📚 Use Cases
-- 👴 For the elderly or disabled users — type-free interaction
+## > Use Cases
+ For the elderly or disabled users — type-free interaction
 
-- 🏫 Schools — quick student registration or surveys
+-  Schools — quick student registration or surveys
 
-- 🏢 Offices — hands-free data collection
+-  Offices — hands-free data collection
 
-- 🧪 Developers — experiment with voice-based AI UX
+-  Developers — experiment with voice-based AI UX
 
 ---
-## 🙌 Credits
+## > Credits
 Developer: [https://github.com/Sevenplx](Chemitha_Sathsilu (Sevenplx))
 
 AI Engine: Faster-Whisper
@@ -104,7 +104,7 @@ Special thanks to Dewmina Mandula and Iduwara Iluk [rysera.com](Rysera_community
 
 ---
 
-🤝 Contributing
+> Contributing
 Contributions, bug reports, and feature suggestions are welcome!
 
 -Fork the repo
@@ -113,7 +113,7 @@ Contributions, bug reports, and feature suggestions are welcome!
 
 -Submit a pull request
 
-📬 Contact
+> Contact
 Have questions, feedback, or want to collaborate?
 
 Email: sathsiluchemitha@gmail.com
