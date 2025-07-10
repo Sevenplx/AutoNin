@@ -90,7 +90,7 @@ Visit [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
 ---
 ## > Credits
-Developer: [https://github.com/Sevenplx](Chemitha_Sathsilu (Sevenplx))
+Developer: [Chemitha Sathsilu (Sevenplx)](https://github.com/Sevenplx)
 
 AI Engine: Faster-Whisper
 
@@ -98,9 +98,9 @@ UI Framework: Tailwind CSS
 
 Icons: Feather Icons
 
-Hosting: [render.com](Render)
+Hosting: [Render](render.com)
 
-Special thanks to Dewmina Mandula and Iduwara Iluk [rysera.com](Rysera_community) for guidance and feedback.
+Special thanks to Dewmina Mandula and Iduwara Iluk [Rysera_community](rysera.com) for guidance and feedback.
 
 ---
 
@@ -118,4 +118,4 @@ Have questions, feedback, or want to collaborate?
 
 Email: sathsiluchemitha@gmail.com
 
-Instagram: [www.instagram,com/sevenplx](@sevenplx)
+Instagram: [@sevenplx](www.instagram,com/sevenplx)
