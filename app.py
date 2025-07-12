@@ -26,18 +26,20 @@ def extract_fields(text):
     if name_match:
         fields['name'] = name_match.group(1)
 
-    # Enhanced safer email logic
-    email_phrases = re.findall(r"(?:email\s+(?:is|address\s+is)?\s*)([\w\d]+)at([\w\d]+)(?:dotcom|\.com)?", text.replace(" ", "").lower())
-    if email_phrases:
-        local, domain = email_phrases[0]
-        email = f"{local}@{domain}.com"
-        fields['email'] = email.lower()
+    # Improved and safer email logic
+    spoken = text.lower()
+    # normalize only specific phrases: " at " -> "@", " dot " -> "."
+    spoken = re.sub(r'\s+at\s+', '@', spoken)
+    spoken = re.sub(r'\s+dot\s+', '.', spoken)
+    m = re.search(r'\b([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})\b', spoken)
+    if m:
+        fields['email'] = m.group(1)
     else:
-        # Fallback for standard email patterns
-        raw_email = text.lower().replace(" at ", "@").replace(" dot ", ".").replace(" ", "").rstrip('.')
-        email_clean = re.findall(r"[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}", raw_email)
-        if email_clean:
-            fields['email'] = email_clean[0].lower()
+        # fallback: use original text without collapsing everything
+        m2 = re.search(r'\b([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})\b',
+                       text, re.IGNORECASE)
+        if m2:
+            fields['email'] = m2.group(1).lower()
 
     # flexible phone number extraction
     phone_match = re.search(
