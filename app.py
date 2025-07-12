@@ -27,19 +27,44 @@ def extract_fields(text):
         fields['name'] = name_match.group(1)
 
     # Improved and safer email logic
-    spoken = text.lower()
-    # normalize only specific phrases: " at " -> "@", " dot " -> "."
-    spoken = re.sub(r'\s+at\s+', '@', spoken)
-    spoken = re.sub(r'\s+dot\s+', '.', spoken)
-    m = re.search(r'\b([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})\b', spoken)
-    if m:
-        fields['email'] = m.group(1)
-    else:
-        # fallback: use original text without collapsing everything
-        m2 = re.search(r'\b([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})\b',
-                       text, re.IGNORECASE)
-        if m2:
-            fields['email'] = m2.group(1).lower()
+    def extract_email(text):
+        # 1) Lowercase & split into sentences
+        text_lower = text.lower()
+        sentences = re.split(r'[.?!]\s*', text_lower)
+
+        target = None
+
+        # Priority A: sentence containing "my email"
+        for s in sentences:
+            if 'my email' in s:
+                target = s
+                break
+
+        # Priority B: first sentence starting with "[words] at [words] .com"
+        if target is None:
+            for s in sentences:
+                if re.match(r'^\s*[\w\d]+(?:\s+[\w\d]+)*\s+at\s+[\w\d]+(?:\s+[\w\d]+)*\s*\.?com', s):
+                    target = s
+                    break
+
+        if not target:
+            return None  # no email found
+
+        #  Normalize spoken tokens in target sentence
+        norm = target
+        norm = re.sub(r'\s+at\s+', '@', norm)
+        norm = re.sub(r'\s+dot\s+', '.', norm)
+        norm = re.sub(r'\s+underscore\s+', '_', norm)
+        norm = re.sub(r'\s+dash\s+', '-', norm)
+
+        # 4) Extract email with regex
+        m = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', norm)
+        return m.group(0).lower() if m else None
+
+    # call the function and save email if found
+    email = extract_email(text)
+    if email:
+        fields['email'] = email
 
     # flexible phone number extraction
     phone_match = re.search(
