@@ -27,27 +27,14 @@ def extract_fields(text):
         fields['name'] = name_match.group(1)
 
     # Improved and safer email logic
-    def extract_fields(text):
-    fields = session.get('fields', {})
-    show_password_warning = False
-
-    def clean_field(value):
-        return value.replace("-", "").strip()
-
-    # ===== NAME =====
-    name_match = re.search(r"(?:my name is|i am|i'm|this is)\s+(\w+)", text, re.IGNORECASE)
-    if name_match:
-        fields['name'] = name_match.group(1)
-
-    # ===== EMAIL =====
     def extract_email(text):
         text_lower = text.lower()
 
-        # 1) If user said "my email", only look after that phrase
+        # 1) If "my email" exists, search only from that point onward
         start_idx = text_lower.find('my email')
         search_space = text_lower[start_idx:] if start_idx != -1 else text_lower
 
-        # 2) Try to match spoken format: [words] at [words] .com
+        # 2) Look for spoken-style email like "alex 383 at gmail dot com"
         m = re.search(
             r'\b([a-z0-9]+(?:\s+[a-z0-9]+)*)\s+at\s+([a-z0-9]+(?:\s+[a-z0-9]+)*)\s*\.?com\b',
             search_space
@@ -57,13 +44,14 @@ def extract_fields(text):
             domain = m.group(2).replace(' ', '')
             return f"{local}@{domain}.com"
 
-        # 3) Fallback: any literal email in full text
+        # 3) Fallback: literal email pattern anywhere
         m2 = re.search(
             r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b',
             text_lower
         )
         return m2.group(0) if m2 else None
 
+    # 4) Use the extractor and assign to the fields
     email = extract_email(text)
     if email:
         fields['email'] = email
