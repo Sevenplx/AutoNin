@@ -27,41 +27,43 @@ def extract_fields(text):
         fields['name'] = name_match.group(1)
 
     # Improved and safer email logic
+    def extract_fields(text):
+    fields = session.get('fields', {})
+    show_password_warning = False
+
+    def clean_field(value):
+        return value.replace("-", "").strip()
+
+    # ===== NAME =====
+    name_match = re.search(r"(?:my name is|i am|i'm|this is)\s+(\w+)", text, re.IGNORECASE)
+    if name_match:
+        fields['name'] = name_match.group(1)
+
+    # ===== EMAIL =====
     def extract_email(text):
-        # 1) Lowercase & split into sentences
         text_lower = text.lower()
-        sentences = re.split(r'[.?!]\s*', text_lower)
 
-        target = None
+        # 1) If user said "my email", only look after that phrase
+        start_idx = text_lower.find('my email')
+        search_space = text_lower[start_idx:] if start_idx != -1 else text_lower
 
-        # Priority A: sentence containing "my email"
-        for s in sentences:
-            if 'my email' in s:
-                target = s
-                break
+        # 2) Try to match spoken format: [words] at [words] .com
+        m = re.search(
+            r'\b([a-z0-9]+(?:\s+[a-z0-9]+)*)\s+at\s+([a-z0-9]+(?:\s+[a-z0-9]+)*)\s*\.?com\b',
+            search_space
+        )
+        if m:
+            local = m.group(1).replace(' ', '')
+            domain = m.group(2).replace(' ', '')
+            return f"{local}@{domain}.com"
 
-        # Priority B: first sentence starting with "[words] at [words] .com"
-        if target is None:
-            for s in sentences:
-                if re.match(r'^\s*[\w\d]+(?:\s+[\w\d]+)*\s+at\s+[\w\d]+(?:\s+[\w\d]+)*\s*\.?com', s):
-                    target = s
-                    break
+        # 3) Fallback: any literal email in full text
+        m2 = re.search(
+            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b',
+            text_lower
+        )
+        return m2.group(0) if m2 else None
 
-        if not target:
-            return None  # no email found
-
-        #  Normalize spoken tokens in target sentence
-        norm = target
-        norm = re.sub(r'\s+at\s+', '@', norm)
-        norm = re.sub(r'\s+dot\s+', '.', norm)
-        norm = re.sub(r'\s+underscore\s+', '_', norm)
-        norm = re.sub(r'\s+dash\s+', '-', norm)
-
-        # 4) Extract email with regex
-        m = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', norm)
-        return m.group(0).lower() if m else None
-
-    # call the function and save email if found
     email = extract_email(text)
     if email:
         fields['email'] = email
