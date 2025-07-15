@@ -419,7 +419,6 @@
     });
 
     function closeModalAnimation() {
-      stopYouTubeVideo(); // <-- Add this line
       modalBox.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
       modalBox.style.transform = 'translateY(-40px)';
       modalBox.style.opacity = '0';
@@ -442,7 +441,6 @@
 
     tabButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        pauseYouTubeVideo(); // <-- Add this line here
         tabContents.forEach(c => c.classList.add('hidden'));
         tabButtons.forEach(b => b.classList.replace('text-blue-400', 'text-gray-700'));
         document.getElementById(btn.dataset.tab).classList.remove('hidden');
@@ -597,32 +595,6 @@
         origin: { x:rect.left/window.innerWidth, y:rect.top/window.innerHeight }
       });
       document.getElementById('confetti-sound').play();
-    }
-  </script>
-  <script src="https://www.youtube.com/iframe_api"></script>
-  <script>
-    let player;
-
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('tutorial-video', {
-        events: {
-          'onReady': function () {
-            console.log("YouTube Player Ready");
-          }
-        }
-      });
-    }
-
-    function pauseYouTubeVideo() {
-      if (player && player.pauseVideo) {
-        player.pauseVideo();
-      }
-    }
-
-    function stopYouTubeVideo() {
-      if (player && player.stopVideo) {
-        player.stopVideo();
-      }
     }
   </script>
 </html>
