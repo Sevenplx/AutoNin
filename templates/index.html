@@ -297,7 +297,8 @@
         <!-- Tutorial -->
         <div class="tab-content" id="tutorial">
           <h2 class="text-red-600 font-bold text-3xl mb-4">> Tutorial</h2>
-          <p class="text-xs sm:text-sm md:text-base">This AI currently supports English only, including names and other inputs.</p>
+          <p class="text-xs sm:text-sm md:text-base mb-4">
+            scroll ⇓</p>
           <div class="w-full max-w-2xl mx-auto aspect-video sm:aspect-video">
             <iframe 
               id="tutorial-video"
@@ -307,6 +308,8 @@
               allowfullscreen
             ></iframe>
           </div>
+          <p class="text-xs sm:text-sm md:text-base"><b class="text-red-400">Notes:</b><i>Transcription may not be 99.9% accurate due to server constraints. See “About” tab for details.</i></p>
+          <p class="text-xs sm:text-sm md:text-base">Also, This AI currently supports English only, including names and other inputs.</p>
         </div>
 
         <!-- About -->
@@ -320,6 +323,10 @@
         </p><br>
         <p class="text-xs sm:text-sm md:text-base">
             The assistant blends real-time transcription with smart field detection, providing a seamless human-like interaction. <b><i>Future updates will include</i></b> support for multiple languages, smarter voice understanding, and expanded input handling for more complex forms.
+        </p><br>
+        <p class="text-xs sm:text-sm md:text-base">
+          <b class="text-red-600">Notice:</b>
+            I initially used <b>OpenAI’s Whisper</b>, but due to limitations in the free hosting tier, it kept crashing. I’ve since switched to <b>Faster-Whisper</b> for better performance and stability, though this comes with a slight trade-off in transcription accuracy. So please consider it.(use <a href="https://github.com/sevenplx/autonin">source-code</a> to improve it).
         </p>
         </div>
 
