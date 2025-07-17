@@ -112,6 +112,33 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
     }
+    #transcript:hover .highlight {
+      background-color: yellow;
+      color: black;
+      transition: 0.2s ease-in-out;
+      cursor: pointer;
+    }
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .text-gradient {
+      background: linear-gradient(90deg, #008eed, #0062ff, #0099ff, #0091f2, #dc14f6, #ff00f7);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradient 8s linear infinite;
+      background-size: 300% 100%;
+    }
+
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-center items-center px-4 text-white font-sans">
@@ -531,7 +558,7 @@
             document.getElementById('phone').value = f.phone||'';
             document.getElementById('address').value = f.address||'';
           }
-          document.getElementById('transcript').innerText = 'Transcription: '+data.text;
+          document.getElementById('transcript').innerHTML = highlightFieldsInText('Transcription: ' + data.text, data.fields);
           if (data.passwordWarning) {
             const lbl = document.getElementById('passwordLabel');
             lbl.classList.add('text-red-400');
@@ -600,5 +627,21 @@
       });
       document.getElementById('confetti-sound').play();
     }
+    function highlightFieldsInText(text, fields) {
+      if (!fields) return text;
+
+      for (const key in fields) {
+        const val = fields[key];
+        if (val) {
+          // Escape special characters for RegExp
+          const escapedVal = val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const regex = new RegExp(escapedVal, 'g');
+          // Wrap matched value with span
+          text = text.replace(regex, `<span class="highlight">${val}</span>`);
+        }
+      }
+      return text;
+    }
+
   </script>
 </html>
