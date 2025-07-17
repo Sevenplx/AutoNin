@@ -22,41 +22,58 @@ def extract_fields(text):
     def clean_field(value):
         return value.replace("-", "").strip()
 
-    name_match = re.search(r"(?:my name is|i am|i'm|this is)\s+(\w+)", text, re.IGNORECASE)
+    # --- NAME extraction ---
+    name_match = re.search(
+        r"(?:my name is|i am|i'm|this is)\s+([A-Za-z][\w\.\- ]*?)(?=[.,!?]| and| and I|$)",
+        text,
+        re.IGNORECASE
+    )
     if name_match:
-        fields['name'] = name_match.group(1)
+        name = name_match.group(1).strip().rstrip(".!,?")
+        fields['name'] = name
 
-    # Improved and safer email logic
-    def extract_email(text):
-        text_lower = text.lower()
+    # --- EMAIL extraction ---
+    text_lower = text.lower()
 
-        # 1) If "my email" exists, search only from that point onward
-        start_idx = text_lower.find('my email')
-        search_space = text_lower[start_idx:] if start_idx != -1 else text_lower
+    # Fix common errors
+    text_lower = re.sub(r'\bmy is (e-?mail|gmail|mail id|email id|yahoo)\b', r'my \1 is', text_lower)
+    text_lower = re.sub(r'dotcom', 'dot com', text_lower)
+    text_lower = re.sub(r'dotorg', 'dot org', text_lower)
+    text_lower = re.sub(r'dotedu', 'dot edu', text_lower)
 
-        # 2) Look for spoken-style email like "alex 383 at gmail dot com"
-        m = re.search(
-            r'\b([a-z0-9]+(?:\s+[a-z0-9]+)*)\s+at\s+([a-z0-9]+(?:\s+[a-z0-9]+)*)\s*\.?com\b',
-            search_space
-        )
-        if m:
-            local = m.group(1).replace(' ', '')
-            domain = m.group(2).replace(' ', '')
-            return f"{local}@{domain}.com"
+    email_keywords = [
+        "my email", "email is", "email address", "email id", "mail id", "mail is",
+        "my mail", "my inbox", "gmail", "yahoo", "hotmail", "outlook",
+        "protonmail", "icloud", "zoho mail", "aol", "rediffmail", "mail dot com",
+        "drop me a mail", "my mail is", "you can mail me at", "email me at",
+        "i'm on gmail", "on yahoo", "on outlook", "mail me at"
+    ]
 
-        # 3) Fallback: literal email pattern anywhere
-        m2 = re.search(
-            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b',
-            text_lower
-        )
-        return m2.group(0) if m2 else None
+    start_idx = -1
+    for keyword in email_keywords:
+        if keyword in text_lower:
+            start_idx = text_lower.find(keyword)
+            break
 
-    # 4) Use the extractor and assign to the fields
-    email = extract_email(text)
-    if email:
-        fields['email'] = email
+    search_space = text_lower[start_idx:] if start_idx != -1 else text_lower
 
-    # flexible phone number extraction
+    # 1) Spoken email like "alex 383 at gmail dot com"
+    m = re.search(
+        r'\b([a-z0-9]+(?:\s+[a-z0-9._]+)*)\s+at\s+([a-z0-9]+(?:\s+[a-z0-9]+)*)\s+(?:dot|\.?)\s*([a-z]{2,})\b',
+        search_space
+    )
+    if m:
+        local = m.group(1).replace(' ', '')
+        domain = m.group(2).replace(' ', '')
+        tld = m.group(3).replace(' ', '')
+        fields['email'] = f"{local}@{domain}.{tld}"
+    else:
+        # 2) Fallback: normal email
+        m2 = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', text_lower)
+        if m2:
+            fields['email'] = m2.group(0)
+
+    # --- PHONE ---
     phone_match = re.search(
         r"(?:my\s+)?(?:phone\s+number\s+is|phone\s+is|contact\s+is|number\s+is|phone:)\s+(\+?[\d\s\-]+)",
         text,
@@ -64,14 +81,16 @@ def extract_fields(text):
     )
     if phone_match:
         number = clean_field(phone_match.group(1))
-        if len(re.sub(r"\D", "", number)) >= 10:  # ensure at least 10 digits
+        if len(re.sub(r"\D", "", number)) >= 10:
             fields['phone'] = number
 
+    # --- ADDRESS ---
     address_match = re.search(r"(?:my address is|address is)\s+(.+?)(?:[\.!?]|$)", text, re.IGNORECASE)
     if address_match:
         addr = address_match.group(1).replace(" slash ", "/").strip()
         fields['address'] = addr
 
+    # --- PASSWORD Warning ---
     if re.search(r"password is\s+(.+?)(?:[\.!?]|$)", text, re.IGNORECASE):
         show_password_warning = True
 
