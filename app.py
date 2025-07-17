@@ -35,47 +35,45 @@ def extract_fields(text):
     # --- EMAIL extraction ---
     text_lower = text.lower()
 
-    # Fix common errors and normalize common email domain endings
-    text_lower = re.sub(r'\bmy is (e-?mail|gmail|mail id|email id|yahoo)\b', r'my \1 is', text_lower)
+    # 1) Normalize “.com/.org/.edu” → “ dot com ” etc.
     text_lower = re.sub(r'\.com\b', ' dot com ', text_lower)
     text_lower = re.sub(r'\.org\b', ' dot org ', text_lower)
     text_lower = re.sub(r'\.edu\b', ' dot edu ', text_lower)
+
+    # 2) Fix stuck “dotcom” variants
     text_lower = re.sub(r'dotcom', 'dot com', text_lower)
     text_lower = re.sub(r'dotorg', 'dot org', text_lower)
     text_lower = re.sub(r'dotedu', 'dot edu', text_lower)
 
-    email_keywords = [
-        "my email", "email is", "email address", "email id", "mail id", "mail is",
-        "my mail", "my inbox", "gmail", "yahoo", "hotmail", "outlook",
-        "protonmail", "icloud", "zoho mail", "aol", "rediffmail", "mail dot com",
-        "drop me a mail", "my mail is", "you can mail me at", "email me at",
-        "i'm on gmail", "on yahoo", "on outlook", "mail me at"
+    # 3) Find where the user actually starts speaking their email
+    email_prefixes = [
+        "my email is", "email is", "my email", "email:", "you can mail me at",
+        "email me at", "mail me at"
     ]
-
     start_idx = -1
-    for keyword in email_keywords:
-        if keyword in text_lower:
-            start_idx = text_lower.find(keyword)
+    for p in email_prefixes:
+        idx = text_lower.find(p)
+        if idx != -1:
+            start_idx = idx + len(p)
             break
+    # If none of those prefixes appear, search the whole text
+    search_space = text_lower[start_idx:].strip() if start_idx != -1 else text_lower
 
-    search_space = text_lower[start_idx:] if start_idx != -1 else text_lower
-
-    # 1) Spoken email like "alex 383 at gmail dot com"
+    # 4) Spoken‑style extraction
     m = re.search(
         r'\b([a-z0-9]+(?:[\s._-]*[a-z0-9]+)*)\s+at\s+([a-z0-9]+(?:[\s._-]*[a-z0-9]+)*)\s*(?:dot|\.|\s)\s*([a-z]{2,})\b',
         search_space
     )
     if m:
-        local = m.group(1).replace(' ', '').replace('_', '').replace('-', '')
-        domain = m.group(2).replace(' ', '').replace('_', '').replace('-', '')
-        tld = m.group(3).replace(' ', '')
+        local = re.sub(r'[\s._-]+', '', m.group(1))
+        domain = re.sub(r'[\s._-]+', '', m.group(2))
+        tld = m.group(3)
         fields['email'] = f"{local}@{domain}.{tld}"
     else:
-        # 2) Fallback: normal email
+        # 5) Fallback: literal email anywhere
         m2 = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', text_lower)
         if m2:
             fields['email'] = m2.group(0)
-
     # --- PHONE ---
     phone_match = re.search(
         r"(?:my\s+)?(?:phone\s+number\s+is|phone\s+is|contact\s+is|number\s+is|phone:)\s+(\+?[\d\s\-]+)",
