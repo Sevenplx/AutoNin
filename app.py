@@ -36,16 +36,6 @@ def extract_fields(text):
     text_lower = text.lower()
 
     # 1) Normalize “.com/.org/.edu” → “ dot com ” etc.
-    text_lower = re.sub(r'\.com\b', ' dot com ', text_lower)
-    text_lower = re.sub(r'\.org\b', ' dot org ', text_lower)
-    text_lower = re.sub(r'\.edu\b', ' dot edu ', text_lower)
-
-    # 2) Fix stuck “dotcom” variants
-    text_lower = re.sub(r'dotcom', 'dot com', text_lower)
-    text_lower = re.sub(r'dotorg', 'dot org', text_lower)
-    text_lower = re.sub(r'dotedu', 'dot edu', text_lower)
-
-    # 3) Find where the user actually starts speaking their email
     email_prefixes = [
         "my email is", "email is", "my email", "email:", "you can mail me at",
         "email me at", "mail me at"
@@ -56,10 +46,21 @@ def extract_fields(text):
         if idx != -1:
             start_idx = idx + len(p)
             break
-    # If none of those prefixes appear, search the whole text
-    search_space = text_lower[start_idx:].strip() if start_idx != -1 else text_lower
 
-    # 4) Spoken‑style extraction
+    # If prefix found, isolate substring for email detection without dotcom replacements
+    if start_idx != -1:
+        search_space = text_lower[start_idx:].strip()
+    else:
+        # Otherwise use whole text and replace dotcom etc for better matching
+        search_space = text_lower
+        search_space = re.sub(r'\.com\b', ' dot com ', search_space)
+        search_space = re.sub(r'\.org\b', ' dot org ', search_space)
+        search_space = re.sub(r'\.edu\b', ' dot edu ', search_space)
+        search_space = re.sub(r'dotcom', 'dot com', search_space)
+        search_space = re.sub(r'dotorg', 'dot org', search_space)
+        search_space = re.sub(r'dotedu', 'dot edu', search_space)
+
+    # 2) Spoken‑style extraction regex (same as before)
     m = re.search(
         r'\b([a-z0-9]+(?:[\s._-]*[a-z0-9]+)*)\s+at\s+([a-z0-9]+(?:[\s._-]*[a-z0-9]+)*)\s*(?:dot|\.|\s)\s*([a-z]{2,})\b',
         search_space
@@ -70,7 +71,7 @@ def extract_fields(text):
         tld = m.group(3)
         fields['email'] = f"{local}@{domain}.{tld}"
     else:
-        # 5) Fallback: literal email anywhere
+        # 3) fallback literal email anywhere
         m2 = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', text_lower)
         if m2:
             fields['email'] = m2.group(0)
