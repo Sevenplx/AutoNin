@@ -35,8 +35,11 @@ def extract_fields(text):
     # --- EMAIL extraction ---
     text_lower = text.lower()
 
-    # Fix common errors
+    # Fix common errors and normalize common email domain endings
     text_lower = re.sub(r'\bmy is (e-?mail|gmail|mail id|email id|yahoo)\b', r'my \1 is', text_lower)
+    text_lower = re.sub(r'\.com\b', ' dot com ', text_lower)
+    text_lower = re.sub(r'\.org\b', ' dot org ', text_lower)
+    text_lower = re.sub(r'\.edu\b', ' dot edu ', text_lower)
     text_lower = re.sub(r'dotcom', 'dot com', text_lower)
     text_lower = re.sub(r'dotorg', 'dot org', text_lower)
     text_lower = re.sub(r'dotedu', 'dot edu', text_lower)
@@ -59,12 +62,12 @@ def extract_fields(text):
 
     # 1) Spoken email like "alex 383 at gmail dot com"
     m = re.search(
-        r'\b([a-z0-9]+(?:\s+[a-z0-9._]+)*)\s+at\s+([a-z0-9]+(?:\s+[a-z0-9]+)*)\s+(?:dot|\.?)\s*([a-z]{2,})\b',
+        r'\b([a-z0-9]+(?:[\s._-]*[a-z0-9]+)*)\s+at\s+([a-z0-9]+(?:[\s._-]*[a-z0-9]+)*)\s*(?:dot|\.|\s)\s*([a-z]{2,})\b',
         search_space
     )
     if m:
-        local = m.group(1).replace(' ', '')
-        domain = m.group(2).replace(' ', '')
+        local = m.group(1).replace(' ', '').replace('_', '').replace('-', '')
+        domain = m.group(2).replace(' ', '').replace('_', '').replace('-', '')
         tld = m.group(3).replace(' ', '')
         fields['email'] = f"{local}@{domain}.{tld}"
     else:
