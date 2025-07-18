@@ -138,13 +138,21 @@
       animation: gradient 8s linear infinite;
       background-size: 300% 100%;
     }
+    /* This will only apply when in day mode */
+.day-mode button:hover,
+.day-mode .btn:hover,
+.day-mode .mic-btn:hover,
+.day-mode .ai-button:hover {
+  color: black !important;
+}
+
 
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-center items-center px-4 text-white font-sans">
 
   <header class="mb-8 text-center">
-    <h1 class="text-3xl sm:text-5xl font-extrabold">Make <span class="text-white">AI</span> <span class="text-gradient">better</span> with <span class="text-gradient">Rysera</span></h1>
+    <h1 class="text-3xl sm:text-5xl font-extrabold">Make <span class="text-white">AI</span> <span class="text-gradient">better</span> with <span id="voice-toggle" class="text-gradient cursor-pointer">Rysera</span></h1>
   </header>
 
   <main class="relative bg-slate-800/70 border border-slate-800 rounded-2xl p-4 sm:p-8 w-full max-w-xs sm:max-w-md lg:max-w-lg shadow-2xl mx-auto">
@@ -650,5 +658,126 @@
       return text;
     }
 
+
+
   </script>
+<!-- Day/Night Script -->
+<script>
+  let isDayMode = false;
+
+  const helpBtn = document.getElementById("help-btn");
+  const helpIcon = helpBtn.querySelector("svg");
+  const moreText = document.getElementById("more-text");
+
+  document.getElementById("voice-toggle").addEventListener("click", () => {
+    const body = document.body;
+    const mainElem = document.querySelector("main");
+    const inputs = document.querySelectorAll("input, textarea");
+    const labels = document.querySelectorAll("label, p, small");
+    const buttons = document.querySelectorAll("button"); // only <button>, not <svg>
+
+    // Clear old hover events from buttons
+    buttons.forEach(btn => {
+      btn.removeEventListener("mouseenter", hoverIn);
+      btn.removeEventListener("mouseleave", hoverOut);
+    });
+
+    if (!isDayMode) {
+      // --- DAY MODE ---
+      body.style.backgroundColor = "#fefff7";
+      mainElem.style.backgroundColor = "aliceblue";
+      mainElem.style.border = "1px solid #ccc";
+      mainElem.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+
+      inputs.forEach(el => {
+        el.style.backgroundColor = "#e8f0fb";
+        el.style.border = "1px solid gray";
+        el.style.color = "#000";
+      });
+
+      labels.forEach(el => el.style.color = "rgb(75, 85, 99)");
+      document.querySelectorAll("h1, h2, h3, h4, h5, h6, span")
+              .forEach(el => el.style.color = "rgb(66, 66, 64)");
+
+      buttons.forEach(btn => {
+        // Default button color in day mode
+        btn.style.color = "aliceblue";
+
+        // Special: if button text is "Clear Form", change color to gray-300
+        if (btn.textContent.trim() === "Clear Form") {
+          btn.style.color = "rgb(209, 213, 219)"; // Tailwind gray-300 (#d1d5db)
+        }
+
+        btn.addEventListener("mouseenter", hoverIn);
+        btn.addEventListener("mouseleave", hoverOut);
+      });
+
+      // help button hover for icon + text
+      helpBtn.addEventListener("mouseenter", helpHoverIn);
+      helpBtn.addEventListener("mouseleave", helpHoverOut);
+
+      // Set default "Click" text color to aliceblue in day mode
+      if (moreText) moreText.style.color = "aliceblue";
+
+    } else {
+      // --- NIGHT MODE (RESET) ---
+      body.style.backgroundColor = "";
+      mainElem.style.backgroundColor = "";
+      mainElem.style.border = "";
+      mainElem.style.boxShadow = "";
+
+      inputs.forEach(el => {
+        el.style.backgroundColor = "";
+        el.style.border = "";
+        el.style.color = "";
+      });
+      labels.forEach(el => el.style.color = "");
+      document.querySelectorAll("h1, h2, h3, h4, h5, h6, b, span")
+              .forEach(el => el.style.color = "");
+
+      buttons.forEach(btn => {
+        btn.style.color = "";
+
+        // Reset Clear Form button color as well
+        if (btn.textContent.trim() === "Clear Form") {
+          btn.style.color = "";
+        }
+
+        btn.removeEventListener("mouseenter", hoverIn);
+        btn.removeEventListener("mouseleave", hoverOut);
+      });
+
+      // Reset help button icon and text, remove listeners
+      if (helpIcon)  helpIcon.style.color = "";
+      if (moreText)  moreText.style.color = "";
+      helpBtn.removeEventListener("mouseenter", helpHoverIn);
+      helpBtn.removeEventListener("mouseleave", helpHoverOut);
+    }
+
+    isDayMode = !isDayMode;
+  });
+
+  // Generic button hover handlers
+  function hoverIn(e)  { e.currentTarget.style.color = "black"; }
+  function hoverOut(e) { 
+    // On hover out, revert to aliceblue or gray-300 for "Clear Form"
+    const btn = e.currentTarget;
+    if (btn.textContent.trim() === "Clear Form") {
+      btn.style.color = "rgb(209, 213, 219)"; // gray-300
+    } else {
+      btn.style.color = "aliceblue";
+    }
+  }
+
+  // Special help button hover (icon + text)
+  function helpHoverIn() {
+    if (helpIcon)  helpIcon.style.color = "black";
+    if (moreText)  moreText.style.color = "black";
+  }
+  function helpHoverOut() {
+    if (helpIcon)  helpIcon.style.color = "aliceblue";
+    if (moreText)  moreText.style.color = "aliceblue";
+  }
+</script>
+
 </html>
