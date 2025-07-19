@@ -608,12 +608,36 @@
     //   setTimeout(() => document.getElementById('ai-message').classList.add('hidden'), 3000);
     // }
 
+    // Global variable to hold the last audio Blob (uploaded or recorded)
+    let lastBlob = null;
+
+    // Call this when you upload a file (pass the File object)
+    function uploadFile(file) {
+      lastBlob = file;  // Save uploaded file for download
+      console.log("uploadFile(): lastBlob set to uploaded file", lastBlob);
+
+      // You can add your existing upload processing code here...
+    }
+
+    // Call this when you finish recording via mic (pass the recorded Blob)
+    function setRecordedBlob(blob) {
+      lastBlob = blob;  // Save recorded audio for download
+      console.log("setRecordedBlob(): lastBlob set to recorded Blob", lastBlob);
+    }
+
+    // Function to download the last recorded or uploaded audio
     function downloadRecording() {
-      if (!lastBlob) return alert('No recording to download');
+      if (!lastBlob) {
+        alert('No recording to download');
+        return;
+      }
       const url = URL.createObjectURL(lastBlob);
       const a = document.createElement('a');
-      a.href = url; a.download = 'recording.webm';
-      a.click(); URL.revokeObjectURL(url);
+      a.href = url;
+      a.download = 'recording.webm';  // or any other extension depending on audio format
+      a.click();
+      URL.revokeObjectURL(url);
+      console.log("downloadRecording(): download triggered");
     }
 
     function clearForm() {
