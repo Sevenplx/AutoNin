@@ -75,6 +75,11 @@ def extract_fields(text):
         m2 = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', text_lower)
         if m2:
             fields['email'] = m2.group(0)
+        else:
+            # 4) fallback for "techatgmail.com" (no @, but ends with gmail.com/yahoo.com/etc)
+            m3 = re.search(r'\b([a-z0-9._%+-]+)at([a-z0-9.-]+\.(?:com|org|edu|net))\b', text_lower)
+            if m3:
+                fields['email'] = f"{m3.group(1)}@{m3.group(2)}"
     # --- PHONE ---
     phone_match = re.search(
         r"(?:my\s+)?(?:phone\s+number\s+is|phone\s+is|contact\s+is|number\s+is|phone:)\s+(\+?[\d\s\-]+)",
