@@ -25,7 +25,6 @@ This project was designed to improve **accessibility**, save time, and showcase 
 -  **Responsive UI**: Optimized for mobile, tablet, and desktop.
 -  **Interactive Feedback**: Audio visualizer, confetti, and fun UI elements, day/night theme.
 -  **Built-in Tutorial**: Integrated YouTube tutorial + about, credits, contact modal.
-![UI Preview]([https://i.imgur.com/example123.png](https://i.imgur.com/44IdHXg.jpeg))
 
 ---
 
@@ -41,6 +40,7 @@ This project was designed to improve **accessibility**, save time, and showcase 
 ---
 
 ## > Project Structure
+```plaintext 
 AutoNin/
 ├── app.py # Flask backend
 ├── templates/
@@ -49,7 +49,7 @@ AutoNin/
 ├── uploads/ # Temporary audio files
 ├── requirements.txt # Python dependencies
 └── README.md # Project overview
-
+```
 
 ---
 
