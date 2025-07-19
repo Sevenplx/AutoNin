@@ -23,8 +23,9 @@ This project was designed to improve **accessibility**, save time, and showcase 
 -  **Smart Field Detection**: Detects name, email, phone, and address from voice.
 -  **Privacy-Aware**: Warns if passwords are detected — does not auto-fill them.
 -  **Responsive UI**: Optimized for mobile, tablet, and desktop.
--  **Interactive Feedback**: Audio visualizer, confetti, and fun UI elements.
+-  **Interactive Feedback**: Audio visualizer, confetti, and fun UI elements, day/night theme.
 -  **Built-in Tutorial**: Integrated YouTube tutorial + about, credits, contact modal.
+![UI Preview]([https://i.imgur.com/example123.png](https://i.imgur.com/44IdHXg.jpeg))
 
 ---
 
