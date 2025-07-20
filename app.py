@@ -35,49 +35,36 @@ def extract_fields(text):
     # --- EMAIL extraction ---
     text_lower = text.lower()
 
-    # 1) Normalize “.com/.org/.edu” → “ dot com ” etc.
-    email_prefixes = [
-        "my email is", "email is", "my email", "email:", "you can mail me at",
-        "email me at", "mail me at"
-    ]
-    start_idx = -1
-    for p in email_prefixes:
-        idx = text_lower.find(p)
-        if idx != -1:
-            start_idx = idx + len(p)
-            break
+    # Normalize spoken email patterns
+    spoken_email = text_lower
+    spoken_email = re.sub(r"\s+at\s+", "@", spoken_email)
+    spoken_email = re.sub(r"\s+dot\s+", ".", spoken_email)
+    spoken_email = re.sub(r"dotcom\b", ".com", spoken_email)
+    spoken_email = re.sub(r"dotorg\b", ".org", spoken_email)
+    spoken_email = re.sub(r"dotedu\b", ".edu", spoken_email)
+    # Handle common providers
+    spoken_email = re.sub(r"gmail\s*dot\s*com", "gmail.com", spoken_email)
+    spoken_email = re.sub(r"yahoo\s*dot\s*com", "yahoo.com", spoken_email)
+    spoken_email = re.sub(r"outlook\s*dot\s*com", "outlook.com", spoken_email)
+    spoken_email = re.sub(r"hotmail\s*dot\s*com", "hotmail.com", spoken_email)
 
-    # If prefix found, isolate substring for email detection without dotcom replacements
-    if start_idx != -1:
-        search_space = text_lower[start_idx:].strip()
-    else:
-        # Otherwise use whole text and replace dotcom etc for better matching
-        search_space = text_lower
-        search_space = re.sub(r'\.com\b', ' dot com ', search_space)
-        search_space = re.sub(r'\.org\b', ' dot org ', search_space)
-        search_space = re.sub(r'\.edu\b', ' dot edu ', search_space)
-        search_space = re.sub(r'dotcom', 'dot com', search_space)
-        search_space = re.sub(r'dotorg', 'dot org', search_space)
-        search_space = re.sub(r'dotedu', 'dot edu', search_space)
-
-    # 2) Spoken‑style extraction regex (same as before)
-    m = re.search(
-        r'\b([a-z0-9]+(?:[\s._-]*[a-z0-9]+)*)\s+at\s+([a-z0-9]+(?:[\s._-]*[a-z0-9]+)*)\s*(?:dot|\.|\s)\s*([a-z]{2,})\b',
-        search_space
-    )
+    # Try to find a valid email
+    m = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', spoken_email)
     if m:
-        local = re.sub(r'[\s._-]+', '', m.group(1))
-        domain = re.sub(r'[\s._-]+', '', m.group(2))
-        tld = m.group(3)
-        fields['email'] = f"{local}@{domain}.{tld}"
+        fields['email'] = m.group(0)
     else:
-        # 3) fallback literal email anywhere
-        m2 = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', text_lower)
+        # Handle broken-up usernames like "alex 383 at gmail.com"
+        m2 = re.search(
+            r'\b([a-z0-9]+)\s+([a-z0-9]+)\s*@\s*([a-z0-9.-]+)\s*\.\s*([a-z]{2,})\b',
+            spoken_email
+        )
         if m2:
-            fields['email'] = m2.group(0)
+            username = m2.group(1) + m2.group(2)
+            domain = m2.group(3) + "." + m2.group(4)
+            fields['email'] = f"{username}@{domain}"
         else:
-            # 4) fallback for "techatgmail.com" (no @, but ends with gmail.com/yahoo.com/etc)
-            m3 = re.search(r'\b([a-z0-9._%+-]+)at([a-z0-9.-]+\.(?:com|org|edu|net))\b', text_lower)
+            # fallback for "techatgmail.com"
+            m3 = re.search(r'\b([a-z0-9._%+-]+)at([a-z0-9.-]+\.(?:com|org|edu|net))\b', spoken_email)
             if m3:
                 fields['email'] = f"{m3.group(1)}@{m3.group(2)}"
     # --- PHONE ---
