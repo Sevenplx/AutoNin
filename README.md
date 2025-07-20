@@ -16,19 +16,14 @@ This project was designed to improve **accessibility**, save time, and showcase 
 ---
 
 ## > Screenshots
->Wait till Screenshots load or click on GIF links
+>Please wait for screenshots to load or click the GIF links to view instantly.
 ![Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
-
-![Day/Night Theme gif](https://i.imgur.com/4aUzbxV.gif)
-
-![Audio visualizer](https://github.com/user-attachments/assets/9a99c294-fa49-4c11-b7ff-dd4a623bf91d)
-
-![Modal Window](https://github.com/user-attachments/assets/3fee54b3-6cbb-4ab3-86cc-4131ac46568f)
-
 [Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
-
+>
+![Audio visualizer](https://github.com/user-attachments/assets/9a99c294-fa49-4c11-b7ff-dd4a623bf91d)
 [Audio visualizer](https://github.com/user-attachments/assets/9a99c294-fa49-4c11-b7ff-dd4a623bf91d)
 
+![Modal Window](https://github.com/user-attachments/assets/3fee54b3-6cbb-4ab3-86cc-4131ac46568f)
 [Modal Window](https://github.com/user-attachments/assets/3fee54b3-6cbb-4ab3-86cc-4131ac46568f)
 
 ---
