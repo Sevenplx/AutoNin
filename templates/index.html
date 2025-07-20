@@ -556,7 +556,7 @@
       fd.append('audiofile', blob, 'recording.webm');
       fetch('/transcribe', { method: 'POST', body: fd })
         .then(r => r.json())
-        .then(data => {
+        .then data => {
           document.getElementById('waitingMsg').classList.add('hidden');
           const f = data.fields;
           if (f) {
@@ -577,11 +577,16 @@
     }
 
     function uploadFile(file) {
+      if (!file) return;
+      lastBlob = file;  // Save uploaded file for download
       document.getElementById('waitingMsg').classList.remove('hidden');
       const fd = new FormData();
       fd.append('audiofile', file);
       fetch('/transcribe', { method: 'POST', body: fd })
-        .then(r => r.json())
+        .then(r => {
+          if (!r.ok) throw new Error('Upload failed');
+          return r.json();
+        })
         .then(data => {
           document.getElementById('waitingMsg').classList.add('hidden');
           const f = data.fields;
@@ -591,14 +596,16 @@
             document.getElementById('phone').value = f.phone||'';
             document.getElementById('address').value = f.address||'';
           }
-          document.getElementById('transcript').innerText = 'Transcription: '+data.text;
+          document.getElementById('transcript').innerHTML = highlightFieldsInText('Transcription: ' + data.text, data.fields);
           if (data.passwordWarning) {
             const lbl = document.getElementById('passwordLabel');
             lbl.classList.add('text-red-400');
             lbl.innerText = 'Password (type manually)*';
           }
-          // const autoBtn = document.getElementById('autoFillBtn');
-          // autoBtn.style.border = '2px solid #FFBF00';
+        })
+        .catch(err => {
+          document.getElementById('waitingMsg').classList.add('hidden');
+          alert('Audio upload failed: ' + err.message);
         });
     }
 
@@ -611,14 +618,6 @@
 
     // Global variable to hold the last audio Blob (uploaded or recorded)
     let lastBlob = null;
-
-    // Call this when you upload a file (pass the File object)
-    function uploadFile(file) {
-      lastBlob = file;  // Save uploaded file for download
-      console.log("uploadFile(): lastBlob set to uploaded file", lastBlob);
-
-      // You can add your existing upload processing code here...
-    }
 
     // Call this when you finish recording via mic (pass the recorded Blob)
     function setRecordedBlob(blob) {
