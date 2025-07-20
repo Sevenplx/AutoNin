@@ -17,9 +17,10 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 ## > Screenshots
 >Please wait for screenshots to load or click the GIF links to view instantly.
+
 ![Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
 [Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
->
+
 ![Audio visualizer](https://github.com/user-attachments/assets/9a99c294-fa49-4c11-b7ff-dd4a623bf91d)
 [Audio visualizer](https://github.com/user-attachments/assets/9a99c294-fa49-4c11-b7ff-dd4a623bf91d)
 
