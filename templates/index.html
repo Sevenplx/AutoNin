@@ -556,7 +556,7 @@
       fd.append('audiofile', blob, 'recording.webm');
       fetch('/transcribe', { method: 'POST', body: fd })
         .then(r => r.json())
-        .then data => {
+        .then(data => {
           document.getElementById('waitingMsg').classList.add('hidden');
           const f = data.fields;
           if (f) {
