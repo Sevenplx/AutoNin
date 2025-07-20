@@ -104,7 +104,15 @@ Hosting: [Render](render.com)
 Special thanks to Dewmina Mandula and Iduwara Iluk [Rysera_community](rysera.com) for guidance and feedback.
 
 ---
+## > Screenshots
 
+![Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
+
+![Audio visualizer](https://github.com/user-attachments/assets/9a99c294-fa49-4c11-b7ff-dd4a623bf91d)
+
+![Modal Window](https://github.com/user-attachments/assets/3fee54b3-6cbb-4ab3-86cc-4131ac46568f)
+
+---
 ## > Contributing
 Contributions, bug reports, and feature suggestions are welcome!
 
@@ -120,9 +128,3 @@ Have questions, feedback, or want to collaborate?
 Email: sathsiluchemitha@gmail.com
 
 Instagram: [@sevenplx](www.instagram,com/sevenplx)
-
----
-
-## > Screenshots
-
-![Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
