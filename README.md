@@ -125,4 +125,4 @@ Instagram: [@sevenplx](www.instagram,com/sevenplx)
 
 ## > Screenshots
 
-[Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
+![Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
