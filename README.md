@@ -119,9 +119,9 @@ UI Framework: Tailwind CSS
 
 Icons: Feather Icons
 
-Hosting: [Render](render.com)
+Hosting: [Render](https://www.render.com)
 
-Special thanks to Dewmina Mandula and Iduwara Iluk [Rysera_community](rysera.com) for guidance and feedback.
+Special thanks to Dewmina Mandula and Iduwara Iluk [Rysera_community](https://www.rysera.com) for guidance and feedback.
 
 ---
 ## > Contributing
@@ -138,4 +138,4 @@ Have questions, feedback, or want to collaborate?
 
 Email: sathsiluchemitha@gmail.com
 
-Instagram: [@sevenplx](www.instagram,com/sevenplx)
+Instagram: [@sevenplx](https://www.instagram.com/sevenplx)
