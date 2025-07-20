@@ -105,7 +105,7 @@ Special thanks to Dewmina Mandula and Iduwara Iluk [Rysera_community](rysera.com
 
 ---
 
-> Contributing
+## > Contributing
 Contributions, bug reports, and feature suggestions are welcome!
 
 -Fork the repo
@@ -114,7 +114,7 @@ Contributions, bug reports, and feature suggestions are welcome!
 
 -Submit a pull request
 
-> Contact
+## > Contact
 Have questions, feedback, or want to collaborate?
 
 Email: sathsiluchemitha@gmail.com
@@ -122,5 +122,7 @@ Email: sathsiluchemitha@gmail.com
 Instagram: [@sevenplx](www.instagram,com/sevenplx)
 
 ---
-> Screenshots
-![Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
+
+## > Screenshots
+
+[Day/Night Theme](https://github.com/user-attachments/assets/6ed4bda9-bd70-4deb-85f2-5f78278c54fd)
