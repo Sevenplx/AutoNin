@@ -10,7 +10,7 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 **Try it out here** → [https://autonin.onrender.com](https://autonin.onrender.com)
 
-> Here's the [Old link](https://autonin-no00.onrender.com) that redirect to the new link.
+> Here's the [Old link](https://autonin-no00.onrender.com) that redirects to the new link.
 
 > Works best on desktop or Chrome mobile.  
 > Use your microphone or upload an audio file.
