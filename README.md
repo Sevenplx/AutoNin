@@ -15,6 +15,16 @@ This project was designed to improve **accessibility**, save time, and showcase 
 > Works best on desktop or Chrome mobile.  
 > Use your microphone or upload an audio file.
 
+---
+
+## 📘 How It Works (Tutorial)
+
+**Youtube Video** → [https://youtu.be/51G4-qEO1O4](https://youtu.be/51G4-qEO1O4)
+> Language: Sinhala
+
+> It covers most parts of the webapp.
+> 
+> Details on GitHub/site — check description
 
 ---
 
