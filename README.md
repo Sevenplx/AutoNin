@@ -17,8 +17,8 @@
 <br />
 
 <div align="center">
-  <a href="https://github.com/davidhdev/vue-bits/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/davidhdev/vue-bits"></a>
-  <a href="https://github.com/davidhdev/vue-bits/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT+Commons_Clause-green"></a>
+  <a href="https://github.com/Sevenplx/AutoNin/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/davidhdev/vue-bits"></a>
+  <a href="https://github.com/Sevenplx/AutoNin/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT+Commons_Clause-green"></a>
 </div>
 
 # AutoNin: Voice-to-Form AI Assistant
