@@ -40,6 +40,7 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 > Works best on desktop or Chrome mobile.  
 > Use your microphone or upload an audio file.
+
 > Supported Language(s): English
 ---
 
