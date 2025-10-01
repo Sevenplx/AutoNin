@@ -1,25 +1,28 @@
 <div align="center">
-	<br>
-	<br>
-    <picture>
-      <source media="(prefers-color-scheme: light)" srcset="src/assets/logos/vuebits-gh-black.svg">
-      <source media="(prefers-color-scheme: dark)" srcset="src/assets/logos/vuebits-gh-white.svg">
-      <img src="src/assets/logos/vuebits-gh-black.svg" alt="vue-bits logo" width="1000">
-    </picture>
-	<br>
-	<br>
+  <br><br>
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="static/logo.png">
+    <source media="(prefers-color-scheme: dark)" srcset="static/logo.png">
+    <img src="static/logo.png" alt="AutoNin Logo" width="175">
+  </picture>
+  <br><br>
 </div>
 
 <div align="center">
-  The largest & most creative library of animated Vue components.
+  An AI-powered web assistant that allows users to fill out digital forms simply by speaking.
 </div>
 
 <br />
 
 <div align="center">
-  <a href="https://github.com/Sevenplx/AutoNin/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/davidhdev/vue-bits"></a>
-  <a href="https://github.com/Sevenplx/AutoNin/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT+Commons_Clause-green"></a>
+  <a href="https://github.com/Sevenplx/AutoNin/stargazers">
+    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Sevenplx/AutoNin">
+  </a>
+  <a href="https://github.com/Sevenplx/AutoNin/blob/main/LICENSE.md">
+    <img alt="License" src="https://img.shields.io/badge/License-MIT+Commons_Clause-green">
+  </a>
 </div>
+
 
 # AutoNin: Voice-to-Form AI Assistant
 
