@@ -19,7 +19,7 @@
     <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Sevenplx/AutoNin">
   </a>
   <a href="https://github.com/Sevenplx/AutoNin/blob/main/LICENSE.md">
-    <img alt="License" src="https://img.shields.io/badge/License-MIT+Commons_Clause-green">
+    <img alt="License" src="https://img.shields.io/badge/License-MIT-green">
   </a>
 </div>
 
