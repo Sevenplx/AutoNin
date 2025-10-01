@@ -40,7 +40,7 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 > Works best on desktop or Chrome mobile.  
 > Use your microphone or upload an audio file.
-
+>
 > Supported Language(s): English
 ---
 
@@ -51,7 +51,7 @@ This project was designed to improve **accessibility**, save time, and showcase 
 
 > It covers most parts of the webapp.
 > 
-> Details on GitHub/site — check description
+> More details on GitHub/site — check description
 
 ---
 
