@@ -1,8 +1,11 @@
 # Use official Python slim image
 FROM python:3.11-slim
 
-# Install system dependencies including ffmpeg
+# Install system dependencies including ffmpeg and build tools
 RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    make \
     ffmpeg \
     pkg-config \
     libavformat-dev \
