@@ -1,34 +1,17 @@
 # Use official Python slim image
 FROM python:3.11-slim
 
-# Install system dependencies including ffmpeg and build tools
+# Install only runtime dependencies (no dev headers)
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    make \
     ffmpeg \
-    pkg-config \
-    libavformat-dev \
-    libavcodec-dev \
-    libavdevice-dev \
-    libavutil-dev \
-    libavfilter-dev \
-    libswscale-dev \
-    libswresample-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory in container
-WORKDIR /app
-
-# Copy requirements and install python packages
+# Copy requirements and install Python packages
 COPY requirements.txt .
+RUN pip install --upgrade pip wheel setuptools
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your app code
+# Copy rest of your app
 COPY . .
 
-# Expose port 5000 (Flask default)
-EXPOSE 5000
-
-# Run your Flask app using gunicorn
-CMD ["gunicorn", "app:app", "-c", "gunicorn.conf.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
